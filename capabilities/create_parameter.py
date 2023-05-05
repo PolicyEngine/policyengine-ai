@@ -1,14 +1,11 @@
-import openai
-import os
-
-
-openai.api_key = os.environ["OPENAI_API_KEY"]
+from .helpers import ask_gpt
 
 MODEL = "gpt-4"
 
 PROMPT = f"""
 
 PolicyEngine uses standardised YAML files to model policy parameters, in the form below:
+personal_allowance.yaml
 ```yaml
 description: A full-sentence description of the parameter.
 metadata:
@@ -20,13 +17,15 @@ metadata:
       href: The URL of the web page or legislative reference.
 values: # any number of values, each with a start date, in order.
     2018-04-01:
-        value: 11_850 # the value of the parameter on this date.
+        value: 11_850.00 # the value of the parameter on this date. Make sure to use underscores to separate thousands.
         reference: # Any references which inform about *only* this value.
         - title: ...
           href: ...
     2019-04-01: ...
 ```
-If you don't have enough information to be confident, return what you have but add a YAML comment explaining where you think you messed up. Return valid YAML only. Below is the information.
+If you don't have enough information to be confident, return what you have but add a YAML comment explaining where you think you messed up. Return valid YAML only. 
+If the user passes you data describing more than one parameter at a time, write parameter files for each one, with the filenames written above.
+Below is the information.
 """
 
 
@@ -43,14 +42,4 @@ def create_parameter(information: str) -> str:
     prompt = PROMPT + information
 
     # Use the chat endpoint to generate the parameter.
-    response = openai.ChatCompletion.create(
-        model=MODEL,
-        messages=[
-            dict(
-                role="user",
-                content=prompt,
-            )
-        ],
-    )["choices"][0]["message"]["content"]
-
-    return response
+    yield from ask_gpt(prompt, model=MODEL, stream=True)

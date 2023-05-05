@@ -30,7 +30,7 @@ Below is the information.
 """
 
 
-def create_parameter(information: str) -> str:
+def create_parameters(information: str) -> str:
     """Write a PolicyEngine parameter YAML file based on the information provided.
 
     Args:

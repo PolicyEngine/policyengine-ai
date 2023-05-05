@@ -5,9 +5,6 @@ import yaml
 
 from capabilities import create_parameters, create_variables, model_policy
 
-create_parameters = st.cache_resource(create_parameters)
-create_variables = st.cache_resource(create_variables)
-model_policy = st.cache_resource(model_policy)
 
 # Point OpenAI to the API key
 openai.api_key = os.environ["OPENAI_API_KEY"]

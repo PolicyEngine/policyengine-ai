@@ -21,7 +21,7 @@ if create_parameter_tab:
         "This tab allows you to create a parameter for a policy. The AI will generate a parameter based on the information you provide."
     )
 
-    information = st.text_input(
+    information = st.text_area(
         "Information", "The UK personal tax allowance. was 12.5k in 2020."
     )
     parameter_file = create_parameter(information)

@@ -1,4 +1,4 @@
-from .helpers import ask_gpt
+from .helpers import ask_gpt_stream
 
 PROMPT = """
 
@@ -10,7 +10,7 @@ The user has a relevant copy-pasted text from legislation. You should preprocess
 
 Example:
 
-# Income Tax Act 2007 s. 1(1)(a)
+# Income Tax Act 2007 s. 1
 1. This has two sublevels:
     (a) This is the first sublevel.
     (b) This is the second sublevel.
@@ -29,8 +29,7 @@ def parse_legislation(text: str) -> str:
     Returns:
         str: Policy text.
     """
-    yield from ask_gpt(
+    yield from ask_gpt_stream(
         prompt=PROMPT + text,
         model="gpt-3.5-turbo",
-        stream=True,
     )

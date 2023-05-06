@@ -1,4 +1,4 @@
-from .helpers import ask_gpt
+from .helpers import ask_gpt_stream
 
 MODEL = "gpt-4"
 
@@ -46,4 +46,4 @@ def create_variables(information: str) -> str:
     prompt = PROMPT + information
 
     # Use the chat endpoint to generate the parameter.
-    yield from ask_gpt(prompt, model=MODEL, stream=True)
+    yield from ask_gpt_stream(prompt, model=MODEL)

@@ -125,4 +125,4 @@ with knowledge_base_tab:
     if submit:
         placeholder = st.empty()
         for result in get_relevant_knowledge(information):
-            placeholder.write(result)
+            placeholder.write(result.replace("$", "\\$"))

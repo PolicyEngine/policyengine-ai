@@ -21,7 +21,7 @@ def get_relevant_knowledge(question: str) -> str:
         prompt=f"""
         Relevant context: {relevant_info}
         The user has a question: {question}
-        Answer the question.
+        Answer the question, always citing where you got the information from.
         """,
         model="gpt-3.5-turbo",
     )

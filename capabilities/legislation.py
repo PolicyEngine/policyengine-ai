@@ -2,19 +2,27 @@ from .helpers import ask_gpt_stream
 
 PROMPT = """
 
-The user has a relevant copy-pasted text from legislation. You should preprocess it into Markdown, in a standardised format using the rules below.
+The user has a relevant copy-pasted text from a source. You should preprocess it into small chunks (30-50 words) of information
 
-* Start with the title and subsection etc. of the legislation, inferring from the URL if necessary.
-* Standardise all sublevels with Markdown indentations following e.g. 1., (a), (i).
-* WHENEVER you use a level like the above, it must be indented and on a newline.
+* Start each section with a YAML metadata entry with the title and URL of the source if applicable.
+* Standardise all all formatting so it's easily readable, with newlines and indentation.
+* Ensure ALL information is preserved. Do not alter which content lines up with which 1. (a) (i) etc.
 
 Example:
 
-# Income Tax Act 2007 s. 1
-1. This has two sublevels:
-    (a) This is the first sublevel.
-    (b) This is the second sublevel.
-        (i) This is the first sublevel of the second sublevel.
+```yaml
+title: "Income Tax Act 2007 s. 1"
+url: "https://www.legislation.gov.uk/ukpga/2007/3/part/2/section/1"
+```
+1. Income tax is charged for each tax year.
+    (a) Income tax is charged on the total income of the tax year.
+    ...
+```yaml
+title: "Income Tax Act 2007 s. 2-3" # Group sections together if they're in a similar context.
+url: "https://www.legislation.gov.uk/ukpga/2007/3/part/2/section/2"
+```
+2. ...
+```
 
 Content below. Return the standardised version.
 """

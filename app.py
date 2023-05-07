@@ -95,7 +95,7 @@ with parse_legislation_tab:
     if submit:
         placeholder = st.empty()
         for result in parse_legislation(information):
-            placeholder.text(result)
+            placeholder.write(result)
 
 # The knowledge base tab allows people to add knowledge from a text area, and then ask a question about it.
 

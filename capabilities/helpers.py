@@ -3,6 +3,7 @@ import os
 from typing import Iterable, Union
 from sentence_transformers import SentenceTransformer, util
 import numpy as np
+import pandas as pd
 
 openai.api_key = os.environ["OPENAI_API_KEY"]
 
@@ -65,6 +66,16 @@ class KnowledgeBase:
         self.embeddings_array = None
         self.model = SentenceTransformer("all-mpnet-base-v2")
 
+    def save(self, path: str):
+        np.save(path, self.embeddings_array)
+        pd.DataFrame({"data": self.data}).to_csv(
+            path + ".csv.gz", index=False, compression="gzip"
+        )
+
+    def load(self, path: str):
+        self.embeddings_array = np.load(path)
+        self.data = pd.read_csv(path + ".csv.gz")["data"].tolist()
+
     def partition_data(self, value: str) -> Iterable[str]:
         """Sometimes we need to partition the data into smaller chunks to keep results useful. We'll ask GPT-3.5-turbo
         to do this for us.
@@ -75,16 +86,37 @@ class KnowledgeBase:
         Returns:
             Iterable[str]: The partitioned data.
         """
+        PROMPT = """
+The user has a relevant copy-pasted text from a source. You should preprocess it into small chunks (30-50 words) of information
+
+* Start each section with a YAML metadata entry with the title and URL of the source if applicable.
+* Standardise all all formatting so it's easily readable, with newlines and indentation.
+* Ensure ALL information is preserved. Do not alter which content lines up with which 1. (a) (i) etc.
+* Always include two newlines between sections.
+
+Example:
+
+```yaml
+title: "Income Tax Act 2007 s. 1"
+url: "https://www.legislation.gov.uk/ukpga/2007/3/part/2/section/1"
+```
+1. Income tax is charged for each tax year.
+    (a) Income tax is charged on the total income of the tax year.
+    ...
+```yaml
+title: "Income Tax Act 2007 s. 2-3" # Group sections together if they're in a similar context.
+url: "https://www.legislation.gov.uk/ukpga/2007/3/part/2/section/2"
+```
+2. ...
+```
+
+Content below. Return the standardised version.
+"""
         partitioned_data = ask_gpt(
-            prompt=f"""
-            User input:
-            {value}
-            Instructions:
-            Separate the above user-supplied data into smaller chunks (50-100 words), separated with ---. Also make sure that each chunk has a title at the start describing what it is.
-            """,
+            prompt=PROMPT + "\n\n" + value,
             model="gpt-3.5-turbo",
         )
-        return partitioned_data.split("---")
+        return partitioned_data.split("\n\n")
 
     def add(self, value: str):
         values_to_add = []

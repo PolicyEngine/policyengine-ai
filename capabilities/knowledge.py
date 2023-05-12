@@ -18,11 +18,19 @@ def get_relevant_knowledge(question: str) -> str:
         str: The most relevant piece of knowledge.
     """
     relevant_info = "\n".join(list(knowledge.search(question, top_n=3)))
+    prompt=f"""
+The user has a question: 
+
+{question}
+
+Relevant laws, regulations, or general background information: 
+
+{relevant_info}
+
+You must answer the question using the information in relevant laws, regulations, or background information above. Always cite where you got the information from.
+"""
+
     return ask_gpt_stream(
-        prompt=f"""
-        Relevant context: {relevant_info}
-        The user has a question: {question}
-        Answer the question, always citing where you got the information from.
-        """,
+        prompt=prompt,
         model="gpt-3.5-turbo",
     )

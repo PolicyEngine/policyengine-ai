@@ -2,3 +2,4 @@ streamlit
 openai
 pyyaml
 sentence-transformers
+chromadb

@@ -1,10 +1,11 @@
-from .helpers import ask_gpt_stream, KnowledgeBase
+from capabilities.helpers.knowledge_bases import ChromaKnowledgeBase 
+from capabilities.helpers.llm import ask_gpt_stream
+from capabilities.helpers.text_splitters import section_header_split 
 
-knowledge = KnowledgeBase()
-
+knowledge = ChromaKnowledgeBase()
 
 def add_to_knowledge(text: str):
-    knowledge.add(text)
+    knowledge.add(text, split_fn=section_header_split)
 
 
 def get_relevant_knowledge(question: str) -> str:

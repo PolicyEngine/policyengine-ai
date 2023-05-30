@@ -1,4 +1,4 @@
-from .helpers import ask_gpt_stream
+from capabilities.helpers.llm import ask_gpt_stream
 
 MODEL = "gpt-4"
 
